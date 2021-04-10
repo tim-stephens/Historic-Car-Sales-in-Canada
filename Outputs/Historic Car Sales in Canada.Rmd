@@ -102,7 +102,7 @@ yearly_vehicle_sales = data.frame()
     yearly_vehicle_sales <- rbind(yearly_vehicle_sales, newrow)
   }
 
-ggplot(yearly_vehicle_sales, aes(x = Year, y = Total)) +
+ggplot(yearly_vehicle_sales, aes(x = Year, y = Cars)) +
   theme_minimal() + 
   geom_point()
 

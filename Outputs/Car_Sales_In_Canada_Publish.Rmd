@@ -1,0 +1,376 @@
+---
+title: "High Oil Prices and Unemployment Rates Contributed to Unusually Low Canadian Automobile Sales in 1982" 
+author: "Tim Stephens"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+thanks: "Code and data are available at: https://github.com/tim-stephens/Historic-Car-Sales-in-Canada.git."
+abstract: 'The automobile industry has been the lifeblood of the Canadian economy since its inception in the early 20th century. Although domestic sales have generally increased over time, they were decimated in the early 1980s. Multiple oil crises in the 1970s led to skyrocketing oil prices, a global recession, and ultimately, a high unemployment rate for Canadians. With an increased price of fuel and a reduced number of jobs available, Canadian automobile manufacturers saw a dramatic decrease of sales in 1982. \newline  \newline Keywords: Automobile, Car, Vehicle, Canada, Unemployment, Oil, Sales, Economy \newpage' 
+output: pdf_document
+bibliography: Car_Sales_In_Canada_bib.bib
+toc: yes
+---
+
+```{r setup, include = FALSE, echo = FALSE, message = FALSE}
+
+###SETUP###
+
+library(tidyverse)
+library(janitor)
+library(tinytex)
+library(here)
+library(bibtex)
+library(gridExtra)
+```
+
+\pagebreak 
+# 1.0 Introduction
+
+&nbsp;
+
+## 1.1 History of the Automobile Industry in Canada 
+
+Canada has a rich automotive history that is deeply connected to its economy. Between the first Canadian automobile produced in 1867 and the early United States (US) imports in 1898 (@CDNauto), Canada has been a player in the global market from the beginning. Canada welcomed the creation of Ford Motor Company of Canada Ltd in 1904, and by 1913, had roughly 50,000 vehicles on Canadian roads (@CDNauto). In the early 1920s, Canada had strengthened its hold on the market and was the second largest producer of vehicles in the world (@cvmaHistory). 
+
+&nbsp;
+
+Nowadays, Canada is still a significant competitor in the automobile market. However, it is not the behemoth it once was. Canada is the 8th largest automobile producer globally and is the third largest exporter after Japan and the US (@CDNauto). Canada is home to many different manufacturing plants, such as Ford, General Motors, Toyota, Honda, and Fiat-Chrysler (@CarsMadeInCan). These plants make massive contributions to Canada’s manufacturing sector, representing 12% of manufacturing gross domestic product (GDP) and 24% of manufacturing trade (@CDNauto). The industry itself employs roughly 130,000 people, mostly located in Ontario, and indirectly employs another 370,000 (@cvmaFacts).
+
+&nbsp;
+
+Canadians (and the Canadian economy) are dependent on automobiles. Every year, Canada exports \$65 billion worth of vehicles and $30 billion worth of parts (@CDNauto). The entire country has been built around the automobile, with cities being designed around roads, highways, and parking lots. There are currently over 35 million registered vehicles in Canada (@statsCan), nearly one registered car for every Canadian. Clearly, the automotive industry is a cornerstone in the Canadian economy. 
+
+&nbsp;
+
+Although 80% of cars produced in Canada are exported (@CDNauto), the high ratio of cars to people means domestic sales still make significant contributions to the economy. Since the beginning, there has been consistent growth in national sales for the Canadian auto industry – with a few exceptions (@newVehicleSales). In the early 1980s, there was a dramatic decrease in the number of new vehicles sold in Canada (@newVehicleSales). There are many factors that affect the number of vehicles sold in a country, but this paper will argue that the combination of high oil prices and high unemployment rates are what led to the dramatic decrease in Canadian automobile sales during the early 1980s. 
+
+&nbsp;
+
+## 1.2 Important Events in the 1970s and 1980s 
+
+The 1970s were a period that saw 2 significant oil crises, the second of which contributed to a global recession (@GlobalRecessions). After World War II, the Allied powers created the state of Israel in the Middle East. Since then, there have been numerous wars between the Arabic and Israeli people. One of these wars was the Yom-Kippur War. It began in 1973 when Egypt and Syria launched an attack on Israel (@HistoryChannel). The Soviet-Union supported Egypt and Syria and the US backed Israel (@HistoryChannel). As an act of retaliation, the Organization of Arab Petroleum Exporting Countries (OAPEC) significantly reduced their oil production and created an oil embargo on the US (@HistoryChannel). This ban on trade and reduced production dramatically affected the price of oil, from \$2.70 USD per barrel in 1973 to $11.00 in 1974 (@oilPrices). This increase in price was felt globally and was enough to send countries not directly affected by the embargo into an energy crisis (@HistoryChannel). Although the trade ban was lifted in 1974, the price of oil stayed relatively high and did not fall back to pre-embargo levels (@oilPrices). 
+
+&nbsp;
+
+In 1979, the second dramatic increase in the price of oil occurred. Prices more than doubled from 1978 - 1979, from \$12.79 USD per barrel to $29.19 (@oilPrices). The late 1970s saw more civil unrest in the Middle East. The Iranian Revolution started in 1978 and ended in 1979 with the Shah of Iran being ousted by Ayatollah Khomeini (@AutomotiveNews, @Investopedia). Khomeini drastically reduced oil production, which reduced global shipments of crude oil (@AutomotiveNews). Due to the reduced supply, gasoline prices skyrocketed.
+
+&nbsp;
+
+Partly because of the dramatic increase in the price of oil, Canada was plunged into a deep recession during the early 1980s. The Iranian Revolution, paired with new monetary policy, led to a sharp decline in US production and an increase in unemployment rates (@GlobalRecessions). Since the US and Canadian economies were so tightly linked, Canadians felt the impact of the US’ decreased production and saw a dramatic increase in the unemployment rate as well. In 1981, unemployment was at 7.6%, but by 1982, this number had jumped to 11.0% (@UnemploymentCan). As the CBC said, “If they’re not building homes in Boston, they’re not cutting timber in BC” (@CBC). The increase in price of oil and new monetary policy eventually led to increasing rates of inflation around the world – including Canada (@GlobalRecessions, @inflation). Currently, the Bank of Canada tries to keep inflation between 1 and 3% (@BOC). In the early 1980s, inflation was at nearly 13% (@inflation). Combining the high inflation rate with a high unemployment rate meant Canadians were having difficulty purchasing groceries, heating their homes, and financing significant life events (@CBC). Without money for food, it is unlikely that many Canadians were considering purchasing an automobile at this time. 
+
+&nbsp;
+
+During the 1970s and early 1980s, domestic cars were the most popular in the market. These large, rear-wheel-drive, gas-guzzlers were fun to drive and were the favourites of the North American market (@AutomotiveNews). Smaller and more fuel-efficient Japanese cars were just starting to gain traction (@AutomotiveNews). Because favourite automobiles used a lot of gas, the price of gas was skyrocketing, inflation rates were increasing, and people could not find jobs, “consumer confidence evaporated” (@AutomotiveNews), and automobile sales were decimated in the early 1980s.  
+
+
+# 2.0 Data
+
+
+```{r Data, echo = FALSE, message = FALSE, include = FALSE}
+
+#read in data
+cars <- read_csv(here("inputs/data/newmotorvehiclesales.csv"))
+oil <- read_csv(here("inputs/data/OPEC_Historic_Oil_Prices_Statista_CSV.csv"))
+unemployment <- read_csv(here("inputs/data/unemployment_rates_can.csv"))
+
+
+#trim car sales data to what we need (exclude provinces)
+cars_canada <- 
+  cars %>% 
+  select(When, Vehicle, Canada) %>% 
+  mutate(date_when = as.Date(When, format="%m/%d/%Y")) %>% 
+  mutate(Year = format(date_when, "%Y"))
+
+#Trim oil price range to match that of car data (up to 2014)
+oil_trimmed <- 
+  oil %>% 
+  filter(`OPEC oil price annually 1960-2021` <= 2014) %>% 
+  rename(c('Year' = 'OPEC oil price annually 1960-2021')) %>% 
+  rename(c('price_in_usd' = "X2"))
+
+#Change oil price year from character to numeric
+oil_trimmed$Year <- as.numeric(as.character(oil_trimmed$Year))
+
+
+#Cleaning the unemployment rate data set
+unemployment_cleaned <- 
+  unemployment %>%
+  clean_names() %>% 
+  filter(geo == 'Canada' & 
+           sex == 'Both sexes' & 
+           age_group == '15 years and over' & 
+           labour_force_characteristics == 'Unemployment rate') %>% 
+  select(c(ref_date, geo, labour_force_characteristics, age_group, sex, value ))
+
+#trim to columns of interest
+unemployment_trimmed <- 
+  unemployment_cleaned %>% 
+  select(c(ref_date, value)) %>% 
+  rename(c('Year' = 'ref_date')) %>% 
+  rename(c('unemployment_rate' = 'value'))
+
+
+```
+
+
+```{r functions, echo = FALSE, message = FALSE, include = FALSE}
+
+###FUNCTIONS###
+
+# GOAL: group sales of trucks, cars, and total sales by year instead of month
+
+
+# Total Truck Yearly Sales
+total_trucks <- 
+  function(year, dataset = cars_canada){
+    temp_dataset <- 
+      dataset %>% 
+      filter(Year == year) %>%
+      filter(Vehicle == "Trucks") 
+    total <- sum(temp_dataset$Canada)
+    return(total)
+  }
+    
+
+# Total Car Yearly Sales
+total_cars <- 
+  function(year, dataset = cars_canada){
+    temp_dataset <- 
+      dataset %>% 
+      filter(Year == year) %>%
+      filter(Vehicle == "Passenger cars") 
+    total <- sum(temp_dataset$Canada)
+    return(total)
+  }
+
+
+# Total Sales
+total_totals <- 
+  function(year, dataset = cars_canada){
+    temp_dataset <- 
+      dataset %>% 
+      filter(Year == year) %>%
+      filter(Vehicle == "Total, new motor vehicles") 
+    total <- sum(temp_dataset$Canada)
+    return(total)
+  }
+
+```
+
+
+```{r Yearly Vehicle Sales, echo = FALSE, message = FALSE, include = FALSE}
+
+#Prepare the data frame for yearly vehicle sales
+yearly_vehicle_sales = data.frame()
+
+#run through every year (1960 - 2014), calculate the total yearly sales, add it to the data frame
+  for (i in 1960:2014) {
+    x <- total_trucks(i)
+    y <- total_cars(i)
+    z <- total_totals(i)
+    newrow <- data.frame(Year = i, Trucks = x, Cars = y, Total = z)
+    yearly_vehicle_sales <- rbind(yearly_vehicle_sales, newrow)
+  }
+
+
+#write to csv for local safekeeping
+write_csv(yearly_vehicle_sales, here("inputs/data/yearly_vehicle_sales.csv"))
+
+
+```
+
+
+```{r Plots, echo = FALSE, include = FALSE, message = FALSE, include = FALSE}
+
+#create some plots to inspect data
+
+oil_plot <-
+  ggplot(oil_trimmed, aes(x = Year, y = price_in_usd )) + 
+    theme_minimal() + 
+    geom_point() + 
+    theme(axis.text.x = element_text(angle = 90))
+
+oil_line <- 
+  oil_trimmed %>% 
+    ggplot(aes(x = Year, y = price_in_usd, group = 1)) + 
+    geom_line()
+
+car_plot <- 
+  ggplot(yearly_vehicle_sales, aes(x = Year, y = Cars)) +
+    theme_minimal() + 
+    geom_point()
+
+truck_plot <- 
+  ggplot(yearly_vehicle_sales, aes(x = Year, y = Trucks)) +
+  theme_minimal() + 
+  geom_point()
+
+total_sales_plot <- 
+  ggplot(yearly_vehicle_sales, aes(x = Year, y = Total)) +
+  theme_minimal() + 
+  geom_point()
+
+yearly_vehicle_sales %>% 
+  ggplot(aes(x = Year, y = Total)) + 
+  geom_line() + 
+  theme_minimal()
+
+
+unemployment_plot <- 
+  ggplot(unemployment_trimmed, aes(x = Year, y = unemployment_rate )) + 
+  theme_minimal() + 
+  geom_line()
+
+
+
+
+```
+
+
+# 3.0 Model 
+
+
+```{r RDD, echo = FALSE, include = FALSE, message = FALSE, include = FALSE}
+
+#Total RDD split on year
+yearly_vehicle_sales %>% 
+  ggplot(aes(x = Year,
+             y = Total)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(data = yearly_vehicle_sales %>% filter(Year < 1982), 
+              method='lm',
+              color = "black") +
+  geom_smooth(data = yearly_vehicle_sales %>% filter(Year >= 1982), 
+              method='lm',
+              color = "black") +
+  theme_minimal() +
+  labs(x = "Year",
+       y = "Number of Vehicles Sold")
+
+
+
+# RDD from 1970:1990
+RDD_data <-
+  yearly_vehicle_sales %>% 
+   filter(Year <= 1990 & Year >= 1970)
+
+
+#chose 1982 because it had the shock unemployment rate from 7.6 - 11%
+RDD_data %>% 
+  ggplot(aes(x = Year,
+             y = Total)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(data = RDD_data %>% filter(Year < 1982), 
+              method='lm',
+              color = "black") + 
+  geom_smooth(data = RDD_data %>% filter(Year >= 1982), 
+              method='lm',
+              color = "black") +
+  theme_minimal() +
+  labs(x = "Year",
+       y = "Number of Vehicles Sold") 
+
+  
+``` 
+
+```{r Linear Model Oil Price Car Sales, echo = FALSE, include = FALSE, message = FALSE, include = FALSE}
+
+oil_prices_lm <- 
+  oil_trimmed %>% 
+  filter(Year >= 1970 & Year <= 1990)
+
+lm_data <- 
+  inner_join(RDD_data, oil_prices_lm, by = 'Year')
+
+ggplot(lm_data, aes(x = price_in_usd, y = Total)) +
+  geom_point() +
+  theme_minimal()
+
+
+linear_model <- 
+  lm(Total ~ price_in_usd, lm_data)
+
+
+summary(linear_model)
+
+```
+
+```{r Linear Model unemployment and sales, echo = FALSE, include = FALSE, message = FALSE, include = FALSE}
+
+total_data_set_1970_1990 <- 
+  inner_join(unemployment_trimmed, lm_data, by = "Year")
+
+ggplot(total_data_set_1970_1990, aes(unemployment_rate, Total)) + 
+  geom_point() + 
+  theme_minimal()
+
+unemployment_rate_lm <- 
+  lm(Total ~ unemployment_rate, total_data_set_1970_1990 )
+
+summary(unemployment_rate_lm)
+
+```
+
+
+```{r More RDD, echo = FALSE, include = FALSE, message = FALSE, include = FALSE}
+###MORE RDD 
+
+### RDD Based on Unemployment cutoff of 10% 
+
+total_data_set_1970_1990 %>% 
+  ggplot(aes(x = unemployment_rate,
+             y = Total)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(data = total_data_set_1970_1990 %>% filter(unemployment_rate < 10), 
+              method='lm',
+              color = "black") +
+  geom_smooth(data = total_data_set_1970_1990 %>% filter(unemployment_rate >= 10), 
+              method='lm',
+              color = "black") +
+  theme_minimal() +
+  labs(x = "unemployment rate",
+       y = "Number of Vehicles Sold")
+
+
+### RDD based on oil prices 
+
+total_data_set_1970_1990 %>% 
+  ggplot(aes(x = price_in_usd,
+             y = Total)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(data = total_data_set_1970_1990 %>% filter(price_in_usd < 29.19), 
+              method='lm',
+              color = "black") +
+  geom_smooth(data = total_data_set_1970_1990 %>% filter(price_in_usd >= 29.19), 
+              method='lm',
+              color = "black") +
+  theme_minimal() +
+  labs(x = "unemployment rate",
+       y = "Number of Vehicles Sold")
+
+
+```
+
+
+# 4.0 Results
+
+
+
+# 5.0 Discussion 
+
+&nbsp;
+
+## 5.1 Weaknesses
+
+&nbsp;
+
+## 5.2 Next Steps
+
+
+# 6.0 Conclusion 
+
+
+
+# Appendix
+
+
+
+# References
