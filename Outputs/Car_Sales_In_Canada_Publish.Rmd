@@ -70,6 +70,7 @@ During the 1970s and early 1980s, domestic cars were the most popular in the mar
 cars <- read_csv(here("inputs/data/newmotorvehiclesales.csv"))
 oil <- read_csv(here("inputs/data/OPEC_Historic_Oil_Prices_Statista_CSV.csv"))
 unemployment <- read_csv(here("inputs/data/unemployment_rates_can.csv"))
+inflation_rates <- read_csv(here("inputs/data/Inflation_Rates.csv"))
 
 
 #trim car sales data to what we need (exclude provinces)
@@ -107,6 +108,11 @@ unemployment_trimmed <-
   rename(c('Year' = 'ref_date')) %>% 
   rename(c('unemployment_rate' = 'value'))
 
+
+#Inflation Rates Cleaning 
+inflation_rates_cleaned <- 
+  inflation_rates %>% 
+    filter(Year <= 2014 & Year >= 1960)
 
 ```
 
@@ -291,6 +297,24 @@ linear_model <-
 
 summary(linear_model)
 
+
+
+#For all years: 
+
+lm_data_oil_all <- 
+  inner_join(yearly_vehicle_sales, oil_trimmed, by = "Year")
+
+linear_model_oil_all <- 
+  lm(Total ~ price_in_usd, lm_data_oil_all)
+
+summary(linear_model_oil_all)
+
+ggplot(lm_data_oil_all, aes(x = price_in_usd, y = Total)) +
+  geom_point() +
+  theme_minimal()
+
+
+
 ```
 
 ```{r Linear Model unemployment and sales, echo = FALSE, include = FALSE, message = FALSE, include = FALSE}
@@ -306,6 +330,22 @@ unemployment_rate_lm <-
   lm(Total ~ unemployment_rate, total_data_set_1970_1990 )
 
 summary(unemployment_rate_lm)
+
+
+
+#for all available years: 
+
+total_data_set_all_av <- 
+  inner_join(unemployment_trimmed, lm_data_oil_all, by = "Year")
+
+ggplot(total_data_set_all_av, aes(unemployment_rate, Total)) + 
+  geom_point() + 
+  theme_minimal()
+
+unemployment_rate_lm_all <- 
+  lm(Total ~ unemployment_rate, total_data_set_all_av )
+
+summary(unemployment_rate_lm_all)
 
 ```
 
@@ -346,6 +386,55 @@ total_data_set_1970_1990 %>%
   labs(x = "unemployment rate",
        y = "Number of Vehicles Sold")
 
+
+```
+```{r}
+
+#Inflation testing 
+
+lm_data_inflation <- 
+  inner_join(yearly_vehicle_sales, inflation_rates_cleaned, by = "Year")
+
+ggplot(lm_data_inflation, aes(x = inflation_rate, y = Total)) +
+  geom_point() +
+  theme_minimal()
+
+linear_model_inflation <- 
+  lm(Total ~ inflation_rate, lm_data_inflation)
+
+summary(linear_model_inflation)
+
+```
+```{r}
+
+#build a linear model with both unemployment and price of oil. 
+
+
+data_set_unemployment_car_sales <- 
+  inner_join(unemployment_trimmed, yearly_vehicle_sales, by = "Year")
+
+data_set_unemployment_car_sales_oil <- 
+  inner_join(data_set_unemployment_car_sales, oil_trimmed, by = "Year")
+
+lm_oil_unemployment_sales <- 
+  lm(Total ~ unemployment_rate + price_in_usd, 
+     data = data_set_unemployment_car_sales_oil)
+
+summary(lm_oil_unemployment_sales)
+
+```
+```{r}
+
+#lets throw inflation in too. just to see 
+
+data_set_unemployment_car_sales_oil_inflation <- 
+  inner_join(data_set_unemployment_car_sales_oil, inflation_rates_cleaned, by = "Year")
+
+lm_model_total_inflation_too <- 
+  lm(Total ~ unemployment_rate + price_in_usd + inflation_rate, 
+     data = data_set_unemployment_car_sales_oil_inflation)
+
+summary(lm_model_total_inflation_too)
 
 ```
 
