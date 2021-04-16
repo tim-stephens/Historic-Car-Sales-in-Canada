@@ -40,7 +40,7 @@ Canadians (and the Canadian economy) are dependent on automobiles. Every year, C
 
 &nbsp;
 
-Although 80% of cars produced in Canada are exported (@CDNauto), the high ratio of cars to people means domestic sales still make significant contributions to the economy. Since the beginning, there has been consistent growth in national sales for the Canadian auto industry – with a few exceptions (@newVehicleSales). In the early 1980s, there was a dramatic decrease in the number of new vehicles sold in Canada (@newVehicleSales). There are many factors that affect the number of vehicles sold in a country, but this paper will argue that the combination of high oil prices and high unemployment rates are what led to the dramatic decrease in Canadian automobile sales during the early 1980s. 
+Although 80% of cars produced in Canada are exported (@CDNauto), the high ratio of cars to people means domestic sales still make significant contributions to the economy. Since the beginning, there has been consistent growth in national sales for the Canadian auto industry – with a few exceptions (@newVehicleSales). In the early 1980s, there was a dramatic decrease in the number of new vehicles sold in Canada (@newVehicleSales). There are many factors that affect the number of vehicles sold in a country, but this paper will argue that the combination of high oil prices, inflation, and unemployment rates were what led to the dramatic decrease in Canadian automobile sales during the early 1980s. 
 
 &nbsp;
 
@@ -58,20 +58,26 @@ Partly because of the dramatic increase in the price of oil, Canada was plunged 
 
 &nbsp;
 
-During the 1970s and early 1980s, domestic cars were the most popular in the market. These large, rear-wheel-drive, gas-guzzlers were fun to drive and were the favourites of the North American market (@AutomotiveNews). Smaller and more fuel-efficient Japanese cars were just starting to gain traction (@AutomotiveNews). Because favourite automobiles used a lot of gas, the price of gas was skyrocketing, inflation rates were increasing, and people could not find jobs, “consumer confidence evaporated” (@AutomotiveNews), and automobile sales were decimated in the early 1980s.  
+During the 1970s and early 1980s, domestic cars were the most popular in the market. These large, rear-wheel-drive, gas-guzzlers were fun to drive and were the favourites of the North American market (@AutomotiveNews). Smaller and more fuel-efficient Japanese cars were just starting to gain traction (@AutomotiveNews). Because favourite automobiles used a lot of gas, the price of gas was skyrocketing, inflation rates were increasing, and people could not find jobs, “consumer confidence evaporated” (@AutomotiveNews), and automobile sales were decimated in the early 1980s. 
+
+&nbsp;
+
+## 1.2 Structure of paper and method of analysis
+
+This paper will try to confirm the research above using datasets provided by various sources. First, a surface level investigation into Canadian automobile sales, world oil prices, unemployment rates, and inflation levels will be done. Next, a Regression Discontinuity Design (RDD) model will be constructed to observe the dip in sales during the year of 1982 and a multiple linear regression model will be created to observe relationships between the different variables and total vehicle sales. The paper will then discuss results, possible weaknesses, and some next steps. Although the paper looks to draw a link between vehicle sales, oil prices, unemployment rates, and inflation, it will not be able to speak to causality of the dramatic decrease in autombile sales during the early 1980s. 
+
+***THIS PART NEEDS TO BE BUILT UP*** WHY NO CAUSALITY??
 
 
 # 2.0 Data
 
+## 2.1 Datasets used 
+In this analysis, four datasets were used. First, the "New Motor Vehicle Sales" dataset was used to determine the number of new vehicles sold in Canada (@newVehicleSales). Published by the Government of Alberta, this dataset records monthly provincial and national vehicle sales as far back as 1946; however, provincial data was not available until 1968. It was last updated in 2015, but the year is not complete. In order to allow for overlap with other datasets, only national data from 1960 to 2014 were included. Monthly vehicle sales were converted to yearly sales. This data comes from a reputable source, but only recorded *new* vehicle sales. Used car sales and gifted vehicles are not included in this analysis. 
 
-```{r Data, echo = FALSE, message = FALSE, include = FALSE}
+```{r Cars,  echo = FALSE, message = FALSE, include = FALSE}
 
-#read in data
+#read in the data
 cars <- read_csv(here("inputs/data/newmotorvehiclesales.csv"))
-oil <- read_csv(here("inputs/data/OPEC_Historic_Oil_Prices_Statista_CSV.csv"))
-unemployment <- read_csv(here("inputs/data/unemployment_rates_can.csv"))
-inflation_rates <- read_csv(here("inputs/data/Inflation_Rates.csv"))
-
 
 #trim car sales data to what we need (exclude provinces)
 cars_canada <- 
@@ -79,43 +85,7 @@ cars_canada <-
   select(When, Vehicle, Canada) %>% 
   mutate(date_when = as.Date(When, format="%m/%d/%Y")) %>% 
   mutate(Year = format(date_when, "%Y"))
-
-#Trim oil price range to match that of car data (up to 2014)
-oil_trimmed <- 
-  oil %>% 
-  filter(`OPEC oil price annually 1960-2021` <= 2014) %>% 
-  rename(c('Year' = 'OPEC oil price annually 1960-2021')) %>% 
-  rename(c('price_in_usd' = "X2"))
-
-#Change oil price year from character to numeric
-oil_trimmed$Year <- as.numeric(as.character(oil_trimmed$Year))
-
-
-#Cleaning the unemployment rate data set
-unemployment_cleaned <- 
-  unemployment %>%
-  clean_names() %>% 
-  filter(geo == 'Canada' & 
-           sex == 'Both sexes' & 
-           age_group == '15 years and over' & 
-           labour_force_characteristics == 'Unemployment rate') %>% 
-  select(c(ref_date, geo, labour_force_characteristics, age_group, sex, value ))
-
-#trim to columns of interest
-unemployment_trimmed <- 
-  unemployment_cleaned %>% 
-  select(c(ref_date, value)) %>% 
-  rename(c('Year' = 'ref_date')) %>% 
-  rename(c('unemployment_rate' = 'value'))
-
-
-#Inflation Rates Cleaning 
-inflation_rates_cleaned <- 
-  inflation_rates %>% 
-    filter(Year <= 2014 & Year >= 1960)
-
 ```
-
 
 ```{r functions, echo = FALSE, message = FALSE, include = FALSE}
 
@@ -182,59 +152,160 @@ write_csv(yearly_vehicle_sales, here("inputs/data/yearly_vehicle_sales.csv"))
 
 
 ```
+&nbsp; 
+ 
+The second dataset used was historical oil prices from 1960 to 2021 (@oilPrices). The dataset was pulled from Statista and was published by Mineralölwirtschaftsverband (MWV), a German company which "[represents] the petroleum industry in legal matters, particularly in the preparation of laws and regulations" (@MWV). MWV monitors world oil prices, particularly the price of crude oil from the Organization of the Petroleum Exporting Countries (OPEC). In order to fit with other data used in this study, only the years 1960 to 2014 were selected. There is some discrepancies between this dataset and the study. This monitors the oil price from OPEC --  not historic Canadian prices. Unfortunately, data on historical Canadian oil prices (within the right time frame) could not be found. Regardless, trends are related between the two, and OPEC prices will hold as a valid substitute. 
 
 
-```{r Plots, echo = FALSE, include = FALSE, message = FALSE, include = FALSE}
+```{r Oil, echo = FALSE, message = FALSE, include = FALSE}
 
-#create some plots to inspect data
+#read in data
+oil <- read_csv(here("inputs/data/OPEC_Historic_Oil_Prices_Statista_CSV.csv"))
 
-oil_plot <-
-  ggplot(oil_trimmed, aes(x = Year, y = price_in_usd )) + 
-    theme_minimal() + 
-    geom_point() + 
-    theme(axis.text.x = element_text(angle = 90))
+#Trim oil price range to match that of car data (up to 2014)
+oil_trimmed <- 
+  oil %>% 
+  filter(`OPEC oil price annually 1960-2021` <= 2014) %>% 
+  rename(c('Year' = 'OPEC oil price annually 1960-2021')) %>% 
+  rename(c('price_in_usd' = "X2"))
 
-oil_line <- 
-  oil_trimmed %>% 
-    ggplot(aes(x = Year, y = price_in_usd, group = 1)) + 
-    geom_line()
+#Change oil price year from character to numeric
+oil_trimmed$Year <- as.numeric(as.character(oil_trimmed$Year))
+```
+&nbsp; 
 
-car_plot <- 
-  ggplot(yearly_vehicle_sales, aes(x = Year, y = Cars)) +
-    theme_minimal() + 
-    geom_point()
+The third dataset used for this analysis was for Canadian unemployment rates (@UnemploymentCan). The dataset was published by Statistics Canada, drawing on information learned from Labour Force Surveys. Information from 1976 - 2018 was collected, which was all that was available. The original dataset was quite large, holding information about the entire Labour Force. It was trimmed to different variables of interest. First, only national unemployment rates were selected. Other labour force statistics were ignored, and provincial data was disregarded. In terms of demographics, unemployment rates for both sexes above the age of 15 were selected. This was selected to get a good idea of how the Canada's labour force was functioning at the time of interest. It is noted, though, that it is unlikely for 15 year olds to be purchasing new vechiles. 
 
-truck_plot <- 
-  ggplot(yearly_vehicle_sales, aes(x = Year, y = Trucks)) +
+```{r Unemployment, echo = FALSE, message = FALSE, include = FALSE}
+
+#read in data
+unemployment <- read_csv(here("inputs/data/unemployment_rates_can.csv"))
+
+#Cleaning the unemployment rate data set
+unemployment_cleaned <- 
+  unemployment %>%
+  clean_names() %>% 
+  filter(geo == 'Canada' & 
+           sex == 'Both sexes' & 
+           age_group == '15 years and over' & 
+           labour_force_characteristics == 'Unemployment rate') %>% 
+  select(c(ref_date, geo, labour_force_characteristics, age_group, sex, value ))
+
+#trim to columns of interest
+unemployment_trimmed <- 
+  unemployment_cleaned %>% 
+  select(c(ref_date, value)) %>% 
+  rename(c('Year' = 'ref_date')) %>% 
+  rename(c('unemployment_rate' = 'value'))
+
+```
+
+&nbsp; 
+
+The last dataset was created by the analyst. Data was pulled from inflation.eu (@infeu1). Inflation.eu "contains current and historic data about inflation and the consumer price index", citing Statistics Canada as its source for Canadian data (@infeu2). Data was copied from the historic data web page into a csv file in order to run the analysis.    
+
+```{r Inflation, echo = FALSE, message = FALSE, include = FALSE}
+
+#read in data
+inflation_rates <- read_csv(here("inputs/data/Inflation_Rates.csv"))
+
+#Inflation Rates Cleaning 
+inflation_rates_cleaned <- 
+  inflation_rates %>% 
+    filter(Year <= 2014 & Year >= 1960)
+
+```
+
+
+## 2.2 How Data was Analyzed 
+Data was analyzed using R(@R). Many packages were used to study the data, with tidyverse doing much of the heavy lifting (@tidyverse). Janitor (@Janitor) was used to clean datasets. Here (@here) helped in locating and saving files. Ggplot2 (@ggplot2) and gridExtra (@gridExtra) were used to create graphs and figures. Tinytex (@tinytex) was used to help write the output to PDF. Finally, bibtex (@bibtex) was used for citations. 
+
+
+## 2.3 Show me the money! 
+
+```{r Car Sales, fig.cap="Historical Car Sales in Canada", echo = FALSE, message = FALSE}
+
+ggplot(yearly_vehicle_sales, aes(x = Year, y = Cars)) +
   theme_minimal() + 
-  geom_point()
-
-total_sales_plot <- 
-  ggplot(yearly_vehicle_sales, aes(x = Year, y = Total)) +
-  theme_minimal() + 
-  geom_point()
-
-yearly_vehicle_sales %>% 
-  ggplot(aes(x = Year, y = Total)) + 
+  geom_point() +
   geom_line() + 
-  theme_minimal()
+  labs(x = "Year", 
+       y = "Number of New Cars Sold",
+       title = "Canadian Car Sales")
 
+```
 
-unemployment_plot <- 
-  ggplot(unemployment_trimmed, aes(x = Year, y = unemployment_rate )) + 
+```{r Truck Sales, fig.cap="Historical Truck Sales in Canada", echo = FALSE, message = FALSE}
+
+ggplot(yearly_vehicle_sales, aes(x = Year, y = Trucks)) +
   theme_minimal() + 
-  geom_line()
-
-
+  geom_point() + 
+  geom_line() + 
+  labs(x = "Year", 
+       y = "Number of New Trucks Sold",
+       title = "Canadian Truck Sales")
 
 
 ```
 
 
+```{r Vehicle Sales, fig.cap="Historical Total Automobile Sales in Canada", echo = FALSE, message = FALSE}
+
+ggplot(yearly_vehicle_sales, aes(x = Year, y = Total)) +
+  theme_minimal() + 
+  geom_point() + 
+  geom_line() + 
+  labs(x = "Year", 
+       y = "Total Number of New Vehicles Sold",
+       title = "Total Vehicles Sold")
+
+
+```
+
+
+```{r Oil Plot, fig.cap="Historical Oil Prices", echo = FALSE, message = FALSE}
+
+ggplot(oil_trimmed, aes(x = Year, y = price_in_usd )) + 
+  theme_minimal() + 
+  geom_point() + 
+  geom_line() +
+  theme(axis.text.x = element_text(angle = 90)) + 
+  labs(x = "Year", 
+       y = "OPEC Price of Oil (per barrel, in USD", 
+       title = "OPEC World Oil Prices")
+
+
+```
+
+
+
+```{r Unemployment Plot, fig.cap="Unemployment Rates in Canada", echo = FALSE, message = FALSE}
+
+ggplot(unemployment_trimmed, aes(x = Year, y = unemployment_rate )) + 
+  theme_minimal() + 
+  geom_point() + 
+  geom_line() + 
+  labs(x = "Year", 
+       y = "Unemployment Rate (% of Labour Force)",
+       title = "Unemployment Rates in Canada")
+
+```
+
+
+```{r Inflation Plot, fig.cap="Inflation Rates in Canada", echo = FALSE, message = FALSE}
+
+ggplot(inflation_rates_cleaned, aes(x = Year, y = inflation_rate)) + 
+  theme_minimal() + 
+  geom_point() + 
+  geom_line() + 
+  labs(x = "Year", 
+       y = "Inflation Rate (%)",
+       title = "Inflation Rates in Canada")
+
+```
+
 # 3.0 Model 
-
-
-```{r RDD, echo = FALSE, include = FALSE, message = FALSE, include = FALSE}
+```{r RDD1982, echo = FALSE, message = FALSE, fig.cap="RDD for Auto Sales and Year"}
 
 #Total RDD split on year
 yearly_vehicle_sales %>% 
@@ -249,67 +320,24 @@ yearly_vehicle_sales %>%
               color = "black") +
   theme_minimal() +
   labs(x = "Year",
-       y = "Number of Vehicles Sold")
+       y = "Number of Vehicles Sold",
+       title = "RDD TEMP")
 
-
-
-# RDD from 1970:1990
-RDD_data <-
-  yearly_vehicle_sales %>% 
-   filter(Year <= 1990 & Year >= 1970)
-
-
-#chose 1982 because it had the shock unemployment rate from 7.6 - 11%
-RDD_data %>% 
-  ggplot(aes(x = Year,
-             y = Total)) +
-  geom_point(alpha = 0.2) +
-  geom_smooth(data = RDD_data %>% filter(Year < 1982), 
-              method='lm',
-              color = "black") + 
-  geom_smooth(data = RDD_data %>% filter(Year >= 1982), 
-              method='lm',
-              color = "black") +
-  theme_minimal() +
-  labs(x = "Year",
-       y = "Number of Vehicles Sold") 
-
-  
-``` 
+```
 
 ```{r Linear Model Oil Price Car Sales, echo = FALSE, include = FALSE, message = FALSE, include = FALSE}
 
-oil_prices_lm <- 
-  oil_trimmed %>% 
-  filter(Year >= 1970 & Year <= 1990)
-
-lm_data <- 
-  inner_join(RDD_data, oil_prices_lm, by = 'Year')
-
-ggplot(lm_data, aes(x = price_in_usd, y = Total)) +
-  geom_point() +
-  theme_minimal()
-
-
-linear_model <- 
-  lm(Total ~ price_in_usd, lm_data)
-
-
-summary(linear_model)
-
-
-
 #For all years: 
 
-lm_data_oil_all <- 
+lm_data_oil_yearly_vehicle_sales <- 
   inner_join(yearly_vehicle_sales, oil_trimmed, by = "Year")
 
-linear_model_oil_all <- 
-  lm(Total ~ price_in_usd, lm_data_oil_all)
+linear_model_oil_and_sales <- 
+  lm(Total ~ price_in_usd, lm_data_oil_yearly_vehicle_sales)
 
-summary(linear_model_oil_all)
+summary(linear_model_oil_and_sales)
 
-ggplot(lm_data_oil_all, aes(x = price_in_usd, y = Total)) +
+ggplot(lm_data_oil_yearly_vehicle_sales, aes(x = price_in_usd, y = Total)) +
   geom_point() +
   theme_minimal()
 
@@ -317,125 +345,81 @@ ggplot(lm_data_oil_all, aes(x = price_in_usd, y = Total)) +
 
 ```
 
-```{r Linear Model unemployment and sales, echo = FALSE, include = FALSE, message = FALSE, include = FALSE}
+```{r Linear Model unemployment and sales, echo = FALSE, include = FALSE, message = FALSE}
 
-total_data_set_1970_1990 <- 
-  inner_join(unemployment_trimmed, lm_data, by = "Year")
+oil_sales_unemp_dataset <- 
+  inner_join(unemployment_trimmed, lm_data_oil_yearly_vehicle_sales, by = "Year")
 
-ggplot(total_data_set_1970_1990, aes(unemployment_rate, Total)) + 
+ggplot(oil_sales_unemp_dataset, aes(unemployment_rate, Total)) + 
   geom_point() + 
   theme_minimal()
 
-unemployment_rate_lm <- 
-  lm(Total ~ unemployment_rate, total_data_set_1970_1990 )
+unemployment_rate_lm_sales <- 
+  lm(Total ~ unemployment_rate, oil_sales_unemp_dataset )
 
-summary(unemployment_rate_lm)
-
-
-
-#for all available years: 
-
-total_data_set_all_av <- 
-  inner_join(unemployment_trimmed, lm_data_oil_all, by = "Year")
-
-ggplot(total_data_set_all_av, aes(unemployment_rate, Total)) + 
-  geom_point() + 
-  theme_minimal()
-
-unemployment_rate_lm_all <- 
-  lm(Total ~ unemployment_rate, total_data_set_all_av )
-
-summary(unemployment_rate_lm_all)
+summary(unemployment_rate_lm_sales)
 
 ```
 
 
-```{r More RDD, echo = FALSE, include = FALSE, message = FALSE, include = FALSE}
-###MORE RDD 
-
-### RDD Based on Unemployment cutoff of 10% 
-
-total_data_set_1970_1990 %>% 
-  ggplot(aes(x = unemployment_rate,
-             y = Total)) +
-  geom_point(alpha = 0.2) +
-  geom_smooth(data = total_data_set_1970_1990 %>% filter(unemployment_rate < 10), 
-              method='lm',
-              color = "black") +
-  geom_smooth(data = total_data_set_1970_1990 %>% filter(unemployment_rate >= 10), 
-              method='lm',
-              color = "black") +
-  theme_minimal() +
-  labs(x = "unemployment rate",
-       y = "Number of Vehicles Sold")
-
-
-### RDD based on oil prices 
-
-total_data_set_1970_1990 %>% 
-  ggplot(aes(x = price_in_usd,
-             y = Total)) +
-  geom_point(alpha = 0.2) +
-  geom_smooth(data = total_data_set_1970_1990 %>% filter(price_in_usd < 29.19), 
-              method='lm',
-              color = "black") +
-  geom_smooth(data = total_data_set_1970_1990 %>% filter(price_in_usd >= 29.19), 
-              method='lm',
-              color = "black") +
-  theme_minimal() +
-  labs(x = "unemployment rate",
-       y = "Number of Vehicles Sold")
-
-
-```
-```{r}
+```{r Linear Model Inflation and sales, echo = FALSE, include = FALSE, message = FALSE}
 
 #Inflation testing 
 
-lm_data_inflation <- 
-  inner_join(yearly_vehicle_sales, inflation_rates_cleaned, by = "Year")
+oil_sales_unemp_inf_dataset <- 
+  inner_join(oil_sales_unemp_dataset, inflation_rates_cleaned, by = "Year")
 
-ggplot(lm_data_inflation, aes(x = inflation_rate, y = Total)) +
+ggplot(oil_sales_unemp_inf_dataset, aes(x = inflation_rate, y = Total)) +
   geom_point() +
   theme_minimal()
 
-linear_model_inflation <- 
-  lm(Total ~ inflation_rate, lm_data_inflation)
+linear_model_inflation_sales <- 
+  lm(Total ~ inflation_rate, oil_sales_unemp_inf_dataset)
 
-summary(linear_model_inflation)
+summary(linear_model_inflation_sales)
 
 ```
-```{r}
+
+
+
+```{r Multiple Linear Regression, echo = FALSE, include = FALSE, message = FALSE}
+
+multiple_lm_model_all_3 <- 
+  lm(Total ~ unemployment_rate + price_in_usd + inflation_rate, 
+     data = oil_sales_unemp_inf_dataset)
+
+summary(multiple_lm_model_all_3)
+
+
+```
+
+```{r Unemployment Oil Sales lm, echo = FALSE, include = FALSE, message = FALSE}
 
 #build a linear model with both unemployment and price of oil. 
 
-
-data_set_unemployment_car_sales <- 
-  inner_join(unemployment_trimmed, yearly_vehicle_sales, by = "Year")
-
-data_set_unemployment_car_sales_oil <- 
-  inner_join(data_set_unemployment_car_sales, oil_trimmed, by = "Year")
-
 lm_oil_unemployment_sales <- 
   lm(Total ~ unemployment_rate + price_in_usd, 
-     data = data_set_unemployment_car_sales_oil)
+     data = oil_sales_unemp_inf_dataset)
 
 summary(lm_oil_unemployment_sales)
 
 ```
-```{r}
 
-#lets throw inflation in too. just to see 
+```{r Inflation Oil Sales lm, echo = FALSE, include = FALSE, message = FALSE}
+lm_oil_inflation_sales <- 
+  lm(Total ~ inflation_rate + price_in_usd, 
+     data = oil_sales_unemp_inf_dataset)
 
-data_set_unemployment_car_sales_oil_inflation <- 
-  inner_join(data_set_unemployment_car_sales_oil, inflation_rates_cleaned, by = "Year")
+summary(lm_oil_inflation_sales)
 
-lm_model_total_inflation_too <- 
-  lm(Total ~ unemployment_rate + price_in_usd + inflation_rate, 
-     data = data_set_unemployment_car_sales_oil_inflation)
+```
 
-summary(lm_model_total_inflation_too)
+```{r Unemployment Inflation Sales lm, echo = FALSE, include = FALSE, message = FALSE}
+lm_inflation_unemployment_sales <- 
+  lm(Total ~ inflation_rate + unemployment_rate, 
+     data = oil_sales_unemp_inf_dataset)
 
+summary(lm_inflation_unemployment_sales)
 ```
 
 
@@ -444,6 +428,9 @@ summary(lm_model_total_inflation_too)
 
 
 # 5.0 Discussion 
+
+#5.1 Ethics
+- this data only focusses on new vehicle sales. Lots of people will never purchase a new vechile in their life. It is possible that those who are buying new cars are wealthy enough to not be as affected by factsors such as inflation and oil prices. 
 
 &nbsp;
 
