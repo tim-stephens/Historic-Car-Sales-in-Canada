@@ -1,8 +1,43 @@
 #####################################################
+#Linear Models that were not used
 
+# ```{r Unemployment Oil Sales lm, echo = FALSE, include = FALSE, message = FALSE}
+# 
+# #build a linear model with both unemployment and price of oil. 
+# 
+# lm_oil_unemployment_sales <- 
+#   lm(Total ~ unemployment_rate + price_in_usd, 
+#      data = oil_sales_unemp_inf_dataset)
+# 
+# summary(lm_oil_unemployment_sales)
+# 
+# ```
+# 
+# ```{r Inflation Oil Sales lm, echo = FALSE, include = FALSE, message = FALSE}
+# lm_oil_inflation_sales <- 
+#   lm(Total ~ inflation_rate + price_in_usd, 
+#      data = oil_sales_unemp_inf_dataset)
+# 
+# summary(lm_oil_inflation_sales)
+# 
+# ```
+# 
+# ```{r Unemployment Inflation Sales lm, echo = FALSE, include = FALSE, message = FALSE}
+# lm_inflation_unemployment_sales <- 
+#   lm(Total ~ inflation_rate + unemployment_rate, 
+#      data = oil_sales_unemp_inf_dataset)
+# 
+# summary(lm_inflation_unemployment_sales)
+# ```
 
-
-
+# lm_data_oil_yearly_vehicle_sales_temp <- 
+#   inner_join(yearly_vehicle_sales, oil_trimmed, by = "Year") %>% 
+#   filter(Year <= 1982 & Year >= 1960)
+# 
+# linear_model_oil_and_sales_2 <- 
+#   lm(Total ~ price_in_usd, lm_data_oil_yearly_vehicle_sales_temp)
+# 
+# summary(linear_model_oil_and_sales_2)
 
 
 #####################################################
