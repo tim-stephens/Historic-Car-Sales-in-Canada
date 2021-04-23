@@ -359,8 +359,8 @@ inflation_plot <-
   
 grid.arrange(vehicle_plot, oil_plot, unemployment_plot, inflation_plot, 
              ncol = 2, 
-             top = "              In the early 1980s, car sales were low, the price of oil was high, 
-             and unemployment and inflation rates were skyrocketing
+             top = "              In the Early 1980s, Vehicle Sales were Low, the Price of Oil was High, 
+             and Unemployment and Inflation Rates were Skyrocketing
              ") #spaces are for formatting
 
 
@@ -379,15 +379,19 @@ grid.arrange(vehicle_plot, oil_plot, unemployment_plot, inflation_plot,
 
 ```{r RDD1980, fig.cap="RDD for Oil Prices", echo = FALSE, message = FALSE, fig.align='center', out.width="65%", out.height="65%"}
 
-#Total RDD split on year
+#Total RDD split on year 1980
+#Code for RDD model is based on code from INF2178H at the University of Toronto, instructed by Rohan Alexander. A link to the code is below.
+#https://www.tellingstorieswithdata.com/causality-from-observational-data.html#regression-discontinuity-design 
 
 yearly_vehicle_sales %>% 
   ggplot(aes(x = Year,
              y = Total)) +
-  geom_point(alpha = 0.2) +
+  geom_point(alpha = 0.2) + #increases transparency of points
+  #create the cut-off at 1980. All points before 1980 are grouped together:
   geom_smooth(data = yearly_vehicle_sales %>% filter(Year < 1980), 
               method='lm',
               color = "black") +
+  #all points after 1980 are grouped together: 
   geom_smooth(data = yearly_vehicle_sales %>% filter(Year >= 1980), 
               method='lm',
               color = "black") +
@@ -395,21 +399,26 @@ yearly_vehicle_sales %>%
   labs(x = "Year",
        y = "Number of Vehicles Sold",
        title = "
-       RDD Model With a cut-off Point at 1980, 
+       RDD Model With a Cut-Off Point at 1980, 
        the Year Oil Prices were Highest")
 ```
 |       The RDD model with 1980 selected as a cut-off point (Figure 8) shows a distinct drop in automobile sales. The light grey bars represent error, and this plot does not have any overlap. This shows that the year of 1980 did have a significant drop in automobile sales when compared to pre-1980 levels. However, there were many factors at play during the year of 1980, so there is not enough evidence to show that oil prices alone are what caused a dramatic drop in sales. Another possible factor in the drop in sales was unemployment, which is inspected next. Figure 9 shows an RDD for the year unemployment was at its highest: 1983. 
 
-```{r RDD1983, fig.cap="RDD for unemployment prices", echo = FALSE, message = FALSE, fig.align='center', out.width="65%", out.height="65%"}
+```{r RDD1983, fig.cap="RDD for Unemployment Rates", echo = FALSE, message = FALSE, fig.align='center', out.width="65%", out.height="65%"}
 
+#Total RDD split on year 1983
+#Code for RDD model is based on code from INF2178H at the University of Toronto, instructed by Rohan Alexander. A link to the code is below.
+#https://www.tellingstorieswithdata.com/causality-from-observational-data.html#regression-discontinuity-design 
 
 yearly_vehicle_sales %>% 
   ggplot(aes(x = Year,
              y = Total)) +
-  geom_point(alpha = 0.2) +
+  geom_point(alpha = 0.2) + #increases transparency of points
+  #create the cut-off at 1983. All points before 1983 are grouped together:
   geom_smooth(data = yearly_vehicle_sales %>% filter(Year < 1983), 
               method='lm',
               color = "black") +
+  #All points after 1983 are grouped together:
   geom_smooth(data = yearly_vehicle_sales %>% filter(Year >= 1983), 
               method='lm',
               color = "black") +
@@ -417,23 +426,28 @@ yearly_vehicle_sales %>%
   labs(x = "Year",
        y = "Number of Vehicles Sold",
        title = "
-       RDD Model With a cut-off Point at 1983, 
+       RDD Model With a Cut-Off Point at 1983, 
        the Year Unemployment Rates were Highest")
 
 ```
 
 |       Figure 9 shows a drop in sales during the year of 1983, but there is significant overlap in the error bars in this model. 1983 is not a good year to represent the dramatic drop in automobile sales in the early 1980s. After inspecting the dataset, it appears that automobile sales started to rebound in 1983. Nonetheless, the effects of unemployment on vehicle sales will still be inspected using a linear model in the following section. The next variable of interest is inflation, which had its highest value in 1981. Figure 10 shows an RDD model with 1981 as the cut-off point.
 
-```{r RDD1981, fig.cap="RDD for inflation", echo = FALSE, message = FALSE, fig.align='center', out.width="65%", out.height="65%"}
+```{r RDD1981, fig.cap="RDD for Inflation Rates", echo = FALSE, message = FALSE, fig.align='center', out.width="65%", out.height="65%"}
 
+#Total RDD split on year 1981
+#Code for RDD model is based on code from INF2178H at the University of Toronto, instructed by Rohan Alexander. A link to the code is below.
+#https://www.tellingstorieswithdata.com/causality-from-observational-data.html#regression-discontinuity-design 
 
 yearly_vehicle_sales %>% 
   ggplot(aes(x = Year,
              y = Total)) +
-  geom_point(alpha = 0.2) +
+  geom_point(alpha = 0.2) + #increases transparency of points
+  #create the cut-off at 1981. All points before 1981 are grouped together:
   geom_smooth(data = yearly_vehicle_sales %>% filter(Year < 1981), 
               method='lm',
               color = "black") +
+  #All points after 1981 are grouped together:
   geom_smooth(data = yearly_vehicle_sales %>% filter(Year >= 1981), 
               method='lm',
               color = "black") +
@@ -441,7 +455,7 @@ yearly_vehicle_sales %>%
   labs(x = "Year",
        y = "Number of Vehicles Sold",
        title = "
-       RDD Model With a cut-off Point at 1981, 
+       RDD Model With a Cut-Off Point at 1981, 
        the Year Inflation was at its Highest")
 
 ```
@@ -449,14 +463,19 @@ yearly_vehicle_sales %>%
 
 ```{r RDD1982, fig.cap="RDD for Sales", echo = FALSE, message = FALSE, fig.align='center', out.width="65%", out.height="65%"}
 
+#Total RDD split on year 1982
+#Code for RDD model is based on code from INF2178H at the University of Toronto, instructed by Rohan Alexander. A link to the code is below.
+#https://www.tellingstorieswithdata.com/causality-from-observational-data.html#regression-discontinuity-design 
 
 yearly_vehicle_sales %>% 
   ggplot(aes(x = Year,
              y = Total)) +
-  geom_point(alpha = 0.2) +
+  geom_point(alpha = 0.2) + #increases transparency of points
+  #Create the cut-off point. All points before 1982 are grouped together:
   geom_smooth(data = yearly_vehicle_sales %>% filter(Year < 1982), 
               method='lm',
               color = "black") +
+  #All points after 1982 are grouped together:
   geom_smooth(data = yearly_vehicle_sales %>% filter(Year >= 1982), 
               method='lm',
               color = "black") +
@@ -464,7 +483,7 @@ yearly_vehicle_sales %>%
   labs(x = "Year",
        y = "Number of Vehicles Sold",
        title = "
-       RDD Model With a cut-off Point at 1982, 
+       RDD Model With a Cut-Off Point at 1982, 
        the Year Automobile Sales were at their Lowest")
 
 
@@ -480,25 +499,31 @@ yearly_vehicle_sales %>%
 
 #For all years: 
 
+#join two datasets together, based on year. We need them in one dataset so we can run analysis on them.
 lm_data_oil_yearly_vehicle_sales <- 
   inner_join(yearly_vehicle_sales, oil_trimmed, by = "Year")
 
+#do the linear regression
 linear_model_oil_and_sales <- 
   lm(Total ~ price_in_usd, lm_data_oil_yearly_vehicle_sales)
 
+#see the results
 summary(linear_model_oil_and_sales)
 
 ```
 
 ```{r Linear Model Oil Price Car Sales plot, fig.cap="Linear Model for Oil and Auto Sales", echo = FALSE, message = FALSE, fig.align='center', out.width="65%", out.height="65%"}
+
+#plot the findings
 ggplot(lm_data_oil_yearly_vehicle_sales, aes(x = price_in_usd, y = Total)) +
   geom_point() +
   geom_smooth(method = 'lm', col = 'blue') + 
+  #lm method gives us same line as calculated in the regression model
   theme_minimal() + 
-  scale_x_continuous(labels=scales::dollar_format())+
+  scale_x_continuous(labels=scales::dollar_format())+ #dollar format on x axis
   labs(x = "Price of Oil (USD)",
        y = "Total Number of Vehicles Sold",
-       title = "As the Price of Oil Increases, Automobile Sales Also Increase")
+       title = "As the Price of Oil Increases, Automobile Sales also Increase")
 
 
 ```
@@ -506,16 +531,18 @@ ggplot(lm_data_oil_yearly_vehicle_sales, aes(x = price_in_usd, y = Total)) +
 
 ```{r Table 1, fig.cap="Linear Regression Results for Oil and Auto Sales", echo = FALSE, message = FALSE, fig.align='center'}
 
+#create a nice output table of findings
+
 huxreg(" " = linear_model_oil_and_sales,
        coefs = c("Intercept" = "(Intercept)", 
-                 "Oil Price (USD)" = "price_in_usd"),
-       statistics = c("Number of Observations" = "nobs",
+                 "Oil Price (USD)" = "price_in_usd"), #renaming 
+       statistics = c("Number of Observations" = "nobs", #choose statistics we want to show
                       "R Squared" = "r.squared",
                       "P Value" = "p.value"),
-       error_pos = 'right') %>% 
-  set_italic(final(1),1) %>% 
-  set_caption("Linear regression of automobile sales and oil prices") %>% 
-  add_footnote("Values in parentheses represent standard error")
+       error_pos = 'right') %>% #change error position to the right (instead of below)
+  set_italic(final(1),1) %>% #italicize p value footnote
+  set_caption("Linear Regression of Automobile Sales and Oil Prices") %>% #add a title
+  add_footnote("Values in parentheses represent standard error") #add a footnote
 
 #helpful huxtable resources: 
 #https://hughjonesd.github.io/huxtable/huxreg.html
@@ -526,23 +553,29 @@ huxreg(" " = linear_model_oil_and_sales,
 
 ```{r Linear Model unemployment and sales, echo = FALSE, include = FALSE, message = FALSE}
 
+#join datasets together on Year so we can run analysis. We need it all in one place to do analysis. 
 oil_sales_unemp_dataset <- 
   inner_join(unemployment_trimmed, lm_data_oil_yearly_vehicle_sales, by = "Year")
 
+#conduct the linear regression
 unemployment_rate_lm_sales <- 
   lm(Total ~ unemployment_rate, oil_sales_unemp_dataset )
 
+#show the results
 summary(unemployment_rate_lm_sales)
 
 
 ```
 
 ```{r Linear Model unemployment Car Sales plot, fig.cap="Linear Model for Unemployment and Auto Sales", echo = FALSE, message = FALSE, fig.align='center', out.width="65%", out.height="65%"}
+
+#visualize results
 ggplot(oil_sales_unemp_dataset, aes(x = unemployment_rate, y = Total)) +
   geom_point() +
-  geom_smooth(method = 'lm', col = 'blue') +  
+  geom_smooth(method = 'lm', col = 'blue') +
+  #lm line gives us same line as calculated using linear regerssion above
   theme_minimal() + 
-  scale_x_continuous(labels=scales::percent_format(scale = 1)) +
+  scale_x_continuous(labels=scales::percent_format(scale = 1)) + # gives % on x axis 
   labs(x = "Unemployment Rate", 
        y = "Total Number of Vehicles Sold",
        title= "As Unemployment Rates Increase, Automobile Sales Decrease")
@@ -551,16 +584,18 @@ ggplot(oil_sales_unemp_dataset, aes(x = unemployment_rate, y = Total)) +
 
 ```{r Table 2, fig.cap="Linear Regression Results for Unemployment and Auto Sales", echo = FALSE, message = FALSE}
 
+#make a nice table of regression results
+
 huxreg(" " = unemployment_rate_lm_sales,
        coefs = c("Intercept" = "(Intercept)", 
-                 "Unemployment Rate" = "unemployment_rate"),
-       statistics = c("Number of Observations" = "nobs",
+                 "Unemployment Rate" = "unemployment_rate"), #rename
+       statistics = c("Number of Observations" = "nobs", #choose statistics we want
                       "R Squared" = "r.squared",
                       "P Value" = "p.value"),
-       error_pos = 'right') %>% 
-  set_italic(final(1),1) %>% 
-  set_caption("Linear regression of automobile sales and unemployment rates") %>% 
-  add_footnote("Values in parentheses represent standard error")
+       error_pos = 'right') %>%  #change error position
+  set_italic(final(1),1) %>%  #italicize p value note
+  set_caption("Linear Regression of Automobile Sales and Unemployment Rates") %>% #add a title
+  add_footnote("Values in parentheses represent standard error") #add a footnote
 ```
 
 |       Figure 13 and Table 2 show a negative correlation between unemployment rate and automobile sales. Essentially, as unemployment rates rise, automobile sales are expected to fall. Table 2 show that for every one-unit increase in unemployment rate, 95,225 less vehicles will be sold. With a p value less than 0.001, this is a significant finding. Unemployment rate and vehicle sales are related. Further analysis will be done in the multiple regression to confirm this finding, and to check for any interaction between variables.
@@ -571,22 +606,29 @@ huxreg(" " = unemployment_rate_lm_sales,
 
 #Inflation testing 
 
+#join two datasets together on year
 oil_sales_unemp_inf_dataset <- 
   inner_join(oil_sales_unemp_dataset, inflation_rates_cleaned, by = "Year")
 
+#calculate the linear regression model
 linear_model_inflation_sales <- 
   lm(Total ~ inflation_rate, oil_sales_unemp_inf_dataset)
 
+#show the model
 summary(linear_model_inflation_sales)
 
 ```
 
 ```{r Linear Model inflation Car Sales plot, fig.cap="Linear Model for Inflation and Auto Sales", echo = FALSE, message = FALSE, fig.align='center', out.width="65%", out.height="65%"}
+
+#visualize the linear regression 
+
 ggplot(oil_sales_unemp_inf_dataset, aes(x = inflation_rate, y = Total)) +
   geom_point() +
   geom_smooth(method = 'lm', col = 'blue') +  
+  #lm line allows us to see the same regression line calculate above
   theme_minimal() +
-  scale_x_continuous(labels=scales::percent_format(scale = 1)) +
+  scale_x_continuous(labels=scales::percent_format(scale = 1)) + #gives us % on x axis 
   labs(x = "Inflation",
        y = "Total Number of Vehicles Sold",
        title = "As Inflation Increases, Automobile Sales Decrease")
@@ -597,16 +639,18 @@ ggplot(oil_sales_unemp_inf_dataset, aes(x = inflation_rate, y = Total)) +
 
 ```{r Table 3, fig.cap="Linear Regression Results for Inflation and Auto Sales", echo = FALSE, message = FALSE}
 
+#make a nice table to report regression findings
+
 huxreg(" " = linear_model_inflation_sales,
        coefs = c("Intercept" = "(Intercept)", 
-                 "Inflation Rate" = "inflation_rate"),
-       statistics = c("Number of Observations" = "nobs",
+                 "Inflation Rate" = "inflation_rate"), #rename
+       statistics = c("Number of Observations" = "nobs", #choose statistics to show
                       "R Squared" = "r.squared",
                       "P Value" = "p.value"),
-       error_pos = 'right') %>% 
-  set_italic(final(1),1) %>% 
-  set_caption("Linear regression of automobile sales and inflation rate") %>% 
-  add_footnote("Values in parentheses represent standard error")
+       error_pos = 'right') %>% #change error position
+  set_italic(final(1),1) %>% #italicize p value note
+  set_caption("Linear Regression of Automobile Sales and Inflation Rate") %>% #title
+  add_footnote("Values in parentheses represent standard error") #add a footnote
 
 ```
 
@@ -614,10 +658,14 @@ huxreg(" " = linear_model_inflation_sales,
 
 ```{r Multiple Linear Regression, echo = FALSE, include = FALSE, message = FALSE}
 
+#linear regression for all three models 
+#don't need to join, b/c all 4 datasets have been combined above. 
+
 multiple_lm_model_all_3 <- 
   lm(Total ~ unemployment_rate + price_in_usd + inflation_rate, 
      data = oil_sales_unemp_inf_dataset)
 
+#show the results
 summary(multiple_lm_model_all_3)
 
 
@@ -625,18 +673,21 @@ summary(multiple_lm_model_all_3)
 ```
 
 ```{r Table 4, fig.cap="multiple linear regression", echo = FALSE, message = FALSE}
+
+#create a nice output table
+
 huxreg(" " = multiple_lm_model_all_3,
        coefs = c("Intercept" = "(Intercept)",
                  "Oil Price (USD)" = "price_in_usd",
                  "Unemployment Rate" = "unemployment_rate",
-                 "Inflation Rate" = "inflation_rate"),                
-       statistics = c("Number of Observations" = "nobs",
+                 "Inflation Rate" = "inflation_rate"),   #rename              
+       statistics = c("Number of Observations" = "nobs", #what statistics do we want to see?
                       "R Squared" = "r.squared",
                       "P Value" = "p.value"),
-       error_pos = 'right') %>% 
-  set_italic(final(1),1) %>% 
-  set_caption("Multiple linear regression of automobile sales, oil prices, unemployment rate, and inflation rate") %>% 
-  add_footnote("Values in parentheses represent standard error")
+       error_pos = 'right') %>% #change error position
+  set_italic(final(1),1) %>%  #italicize the p value note
+  set_caption("Multiple Linear Regression of Automobile Sales, Oil Price, Unemployment Rate, and Inflation Rate") %>% #title
+  add_footnote("Values in parentheses represent standard error")#footnote
 ```
 \newpage
 
