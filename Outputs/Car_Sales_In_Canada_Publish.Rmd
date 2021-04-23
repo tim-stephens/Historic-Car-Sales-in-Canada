@@ -769,7 +769,13 @@ huxreg(" " = multiple_lm_model_all_3,
 \newpage
 # References
 
+\newpage
+# Appendix
 
+Link to ShinyApp (Oil Prices): https://tim-stephens1.shinyapps.io/Oil_Prices_Change_Range/
 
+Link to ShinyApp (Unemployment Rates): https://tim-stephens1.shinyapps.io/Unemployment_Rate_Adjustable_Range/
+
+Link to ShinyApp (Inflation Rate): https://tim-stephens1.shinyapps.io/Inflation_rates_adjustable_range/
 
 

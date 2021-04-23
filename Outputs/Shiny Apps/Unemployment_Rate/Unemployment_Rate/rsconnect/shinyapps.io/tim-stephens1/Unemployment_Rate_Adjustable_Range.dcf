@@ -1,0 +1,12 @@
+name: Unemployment_Rate_Adjustable_Range
+title: Unemployment_Rate_Adjustable_Range
+username:
+account: tim-stephens1
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4022204
+bundleId: 4511917
+url: https://tim-stephens1.shinyapps.io/Unemployment_Rate_Adjustable_Range/
+when: 1619220219.0876
+asMultiple: FALSE
+asStatic: FALSE
